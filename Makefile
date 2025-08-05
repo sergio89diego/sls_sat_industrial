@@ -22,7 +22,7 @@ REQ_FILE := requirements.txt
 
 ## crea/actualiza el entorno virtual
 env:
-	apt update && apt install -y python3-venv python3-pip
+	sudo apt update && sudo apt install -y python3-venv python3-pip
 	$(PY) -m venv $(VENV_DIR); \
 	echo "[+] Entorno creado en $(VENV_DIR)"; \
 	source $(VENV_DIR)/bin/activate; \
