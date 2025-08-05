@@ -7,18 +7,20 @@ MAX_WORKERS = max(1, multiprocessing.cpu_count() - 2)
 
 def main():
     experiments = [
-                {
-            "base_name": "GSAT_random_flips&tries",
+        {
+            "base_name": "WalkSAT_community_v01",
             "n": [50,100,250,500,1000],
+            "p": [0.5],
+            "c": [10,20,30],
+            "Q": [0.2,0.5,0.8],
             "k": 3,
-            "max_tries_values": [5,50],
-            "max_flips_coef_values": None,  # Usar coeficientes
-            "max_flips_values": [10,100,250],  # No usar valores fijos
-            "m_n_ratios": np.arange(1.0, 5.0, 0.1),
+            "max_tries_values": [3],
+            "max_flips_coef_values": [10],
+            "max_flips_values": None,
+            "m_n_ratios": np.arange(2.5, 5.5, 0.1),
             "num_seeds": 100,
-            "algorithm_type": "GSAT" # GSAT, WalkSAT_community, WalkSAT_random
+            "algorithm_type": "WalkSAT_community" # GSAT, WalkSAT_community, WalkSAT_random
         },
-
     ]
 
     for exp_config in experiments:
@@ -45,8 +47,8 @@ def main():
             Q_values=Q_values if exp_config["algorithm_type"] == "WalkSAT_community" else None,
             k=exp_config["k"],
             max_tries_values=exp_config["max_tries_values"],
-            max_flips_values=exp_config.get("max_flips_values"),  # Usar get() por si no está definido
-            max_flips_coef_values=exp_config.get("max_flips_coef_values"),  # Usar get() por si no está definido
+            max_flips_values=exp_config.get("max_flips_values"),
+            max_flips_coef_values=exp_config.get("max_flips_coef_values"),
             m_n_ratios=exp_config["m_n_ratios"],
             num_seeds=exp_config["num_seeds"],
             algorithm_type=exp_config["algorithm_type"]

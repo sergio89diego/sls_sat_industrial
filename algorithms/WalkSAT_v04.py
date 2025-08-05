@@ -29,7 +29,7 @@ class WalkSAT:
         file_communities = os.path.join(temp_dir, "communities.txt")
 
         try:
-            path_generator_model = "./communityAttachment/commAttach"
+            path_generator_model = "./generator/communityAttachment/commAttach"
             arguments = ['-n', str(self.variables), '-m', str(self.clauses),
                         '-k', str(self.clauseLength), '-c', str(self.communities),
                         '-Q', str(self.modularity), '-s', str(self.seed)]
@@ -42,7 +42,7 @@ class WalkSAT:
             with open(file_formula, "w") as file:
                 file.write(decoded_output)
 
-            path_features_s = "./graph_features_sat_v_2_2/features_s"
+            path_features_s = "./generator/graph_features_sat_v_2_2/features_s"
             arguments = ["-5", "-q", file_communities, file_formula]
             process = subprocess.Popen(
                 [path_features_s] + arguments, stdout=subprocess.PIPE)

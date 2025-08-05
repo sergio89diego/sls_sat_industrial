@@ -200,50 +200,31 @@ def generate_metrics_tables(all_metrics, vary_params, output_file=None):
     if output_file:
         base_name = output_file.replace('.txt', '')
         
-        # Tabla general
         general_csv = f"{base_name}_general.csv".replace('\\metrics','\\metrics\\csv')
         df_general.to_csv(general_csv, index=False)
-        print(f"\nGeneral table save as CSV: {general_csv}")
-        
-        general_tex = f"{base_name}_general.tex"
-        with open(general_tex, 'w') as f:
-            f.write(df_general.to_latex(
+        print(f"\nGeneral table saved as CSV: {general_csv}")
+
+        general_md = f"{base_name}_general.md"
+        with open(general_md, 'w') as f:
+            f.write(df_detailed.to_markdown(
                 index=False, 
-                float_format="%.2f",
-                column_format="l" + "c"*3
+                floatfmt=".2f",
+                tablefmt="github"
             ))
-        print(f"General table save as LaTeX: {general_tex}")
-        
-        general_tex = f"{base_name}_general.tex"
-        with open(general_tex, 'w') as f:
-            # Escapar caracteres especiales en los nombres de las columnas
-            df_general.columns = [col.replace('_', r'\_') for col in df_general.columns]
-            df_general.columns = [col.replace('AvgSucc', r'AvgSucc(\%)') for col in df_general.columns]
-            f.write(df_general.to_latex(
-                index=False, 
-                float_format="%.2f",
-                column_format="l" + "c"*3,
-                escape=False  # Ya hemos escapado manualmente
-            ))
-        print(f"General table save as LaTeX: {general_tex}")
-        
-        # Tabla detallada
+        print(f"General table saved as Markdown: {general_md}") 
+    
         detailed_csv = f"{base_name}_detailed.csv".replace('\\metrics','\\metrics\\csv')
         df_detailed.to_csv(detailed_csv, index=False)
-        print(f"Detailed table save as CSV: {detailed_csv}")
-        
-        detailed_tex = f"{base_name}_detailed.tex"
-        with open(detailed_tex, 'w') as f:
-            # Escapar caracteres especiales en los nombres de las columnas
-            df_detailed.columns = [col.replace('_', r'\_') for col in df_detailed.columns]
-            df_detailed.columns = [col.replace('AvgSucc', r'AvgSucc(\%)') for col in df_detailed.columns]
-            f.write(df_detailed.to_latex(
+        print(f"Detailed table saved as CSV: {detailed_csv}")
+          
+        detailed_md = f"{base_name}_detailed.md"
+        with open(detailed_md, 'w') as f:
+            f.write(df_detailed.to_markdown(
                 index=False, 
-                float_format="%.2f",
-                column_format="ll" + "c"*(3),
-                escape=False  # Ya hemos escapado manualmente
+                floatfmt=".2f",
+                tablefmt="github"
             ))
-        print(f"Detailed table save as LaTeX: {detailed_tex}")     
+        print(f"Detailed table saved as Markdown: {detailed_md}") 
     
     return df_general, df_detailed
 
@@ -385,23 +366,23 @@ def analyze_results(filename):
     base_name = filename
     if base_name.lower().endswith('.txt'):
         base_name = base_name[:-4]
-    plot_file = base_name.replace('results/', 'data\\results\\plots\\') + '.png'
-    metrics_output_file = base_name.replace('results/', 'data\\results\\metrics\\') + '.txt'
+    plot_file = base_name.replace('results/', 'plots\\') + '.png'
+    metrics_output_file = base_name.replace('results/', 'metrics\\') + '.txt'
 
     generate_custom_grid(
         df,
         experiment_name="Success Rate by Community Size and Randomness",
         plot_file=plot_file,
-        # vary_params=['Q', 'c'],  # o flips_coef
-        vary_params=['p'],  # o flips_coef
+        vary_params=['Q', 'c'],  # o flips_coef
+        # vary_params=['p'],  # o flips_coef
         # vary_params=['max_tries', 'max_flips'],  # o flips_coef
-        # fixed_params={'p':0.5, 'max_tries': 3, 'flips_coef':10},
-        fixed_params={'max_tries': 3, 'flips_coef':10},
+        fixed_params={'p':0.5, 'max_tries': 3, 'flips_coef':10},
+        # fixed_params={'max_tries': 3, 'flips_coef':10},
         # fixed_params={'p':0.5, 'Q':0.8, 'c':20},
         # fixed_params={'p':0.5},
         metrics_output_file=metrics_output_file
     )
 
 if __name__ == "__main__":
-    filename = r"data/results/results_WalkSAT_random.txt"
+    filename = r"data/results/results_WalkSAT_community_v02.txt"
     analyze_results(filename)

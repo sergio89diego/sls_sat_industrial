@@ -1,0 +1,7 @@
+numpy
+pandas
+matplotlib
+tqdm
+
+tabulate
+Jinja2

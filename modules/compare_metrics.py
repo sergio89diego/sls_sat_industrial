@@ -20,9 +20,9 @@ def load_results(directory):
 
 # Normalize scores for comparison
 def normalize_scores(df):
-    df['norm_time'] = 1 / (1 + df['avg_time'])
+    # df['norm_time'] = 1 / (1 + df['avg_time'])
     
-    for col in ['avg_success', 'max_success', 'phase_transition']:
+    for col in ['AvgSucc', 'AvgFlips', 'PhaseTr']:
         if col in df.columns:
             df[f'norm_{col}'] = df[col] / df[col].max()
     
@@ -32,18 +32,15 @@ def normalize_scores(df):
 def calculate_composite_score(df, weights):
     score_components = []
     
-    if 'norm_avg_success' in df.columns and 'avg_success' in weights:
-        score_components.append(df['norm_avg_success'] * weights['avg_success'])
+    if 'norm_AvgSucc' in df.columns and 'AvgSucc' in weights:
+        score_components.append(df['norm_AvgSucc'] * weights['AvgSucc'])
     
-    if 'norm_max_success' in df.columns and 'max_success' in weights:
-        score_components.append(df['norm_max_success'] * weights['max_success'])
+    if 'norm_AvgFlips' in df.columns and 'AvgFlips' in weights:
+        score_components.append(df['norm_AvgFlips'] * weights['AvgFlips'])
     
-    if 'norm_phase_transition' in df.columns and 'phase_transition' in weights:
-        score_components.append(df['norm_phase_transition'] * weights['phase_transition'])
-    
-    if 'norm_time' in df.columns and 'avg_time' in weights:
-        score_components.append(df['norm_time'] * weights['avg_time'])
-    
+    if 'norm_PhaseTr' in df.columns and 'PhaseTr' in weights:
+        score_components.append(df['norm_PhaseTr'] * weights['PhaseTr'])
+
     if not score_components:
         raise ValueError("No hay métricas válidas para calcular la puntuación")
     
@@ -54,11 +51,11 @@ def calculate_composite_score(df, weights):
 def compare_algorithms(results_dir, output_file=None, weights=None):
     if weights is None:
         weights = {
-            'avg_success': 0.4,
-            'avg_total_flips': 0.2,
-            'max_success': 0.1,
-            'phase_transition': 0.1,
-            'avg_time': 0.2
+            'AvgSucc': 0.4,
+            'AvgFlips': 0.2,
+            # 'max_success': 0.1,
+            'PhaseTr': 0.1,
+            # 'avg_time': 0.2
         }
     
     try:
@@ -67,19 +64,19 @@ def compare_algorithms(results_dir, output_file=None, weights=None):
         df = calculate_composite_score(df, weights)
         
         comparison_df = df.groupby('Algorithm').agg({
-            'avg_success': 'mean',
-            'avg_total_flips': 'mean',
+            'AvgSucc': 'mean',
+            'AvgFlips': 'mean',
             # 'max_success': 'mean',
-            'avg_time': 'mean',
-            # 'phase_transition': 'mean',
+            # 'avg_time': 'mean',
+            'PhaseTr': 'mean',
             'Composite_Score': 'mean'
         }).sort_values('Composite_Score', ascending=False)
         
         comparison_df = comparison_df.reset_index()
         comparison_df['Rank'] = range(1, len(comparison_df) + 1)
         
-        cols = ['Rank', 'Algorithm', 'Composite_Score', 'avg_success', 'avg_total_flips', 'max_success', 
-                'phase_transition', 'avg_time']
+        cols = ['Rank', 'Algorithm', 'Composite_Score', 'AvgSucc', 'AvgFlips', 'max_success', 
+                'PhaseTr', 'avg_time']
         comparison_df = comparison_df[[c for c in cols if c in comparison_df.columns]]
         
         print("\nComparación de Algoritmos:")
@@ -88,7 +85,7 @@ def compare_algorithms(results_dir, output_file=None, weights=None):
         
         best_algo = comparison_df.iloc[0]['Algorithm']
         best_score = comparison_df.iloc[0]['Composite_Score']
-        print(f"\nMEJOR ALGORITMO: {best_algo} (Puntuación: {best_score:.2f})")
+        print(f"\nBEST ALGORITHM: {best_algo} (Score: {best_score:.2f})")
         
         if output_file:
             # CSV
@@ -115,15 +112,15 @@ def compare_algorithms(results_dir, output_file=None, weights=None):
         return None
 
 if __name__ == "__main__":
-    results_directory = r"data/results/metrics/csv"
-    output_comparison = results_directory + r"/comparacion_algoritmos.txt"
+    results_directory = r"data/metrics"
+    output_comparison = results_directory + r"/comparation_algorithms.txt"
     
     custom_weights = {
-        'avg_success': 0.6,  
-        'avg_total_flips': 0.3,
-        'max_success': 0.0,
-        'phase_transition': 0.0,
-        'avg_time': 0.1
+        'AvgSucc': 0.6,  
+        'AvgFlips': 0.4,
+        # 'max_success': 0.0,
+        'PhaseTr': 0.0,
+        # 'avg_time': 0.0
     }
     
     comparison_results = compare_algorithms(

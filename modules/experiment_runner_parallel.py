@@ -214,7 +214,7 @@ def run_experiment_parallel(
     num_seeds=100,
     algorithm_type='WalkSAT_community'
 ):
-    os.makedirs('results', exist_ok=True)
+    os.makedirs('data/results', exist_ok=True)
     
     results_txt_file = f'data/results/results_{experiment_name}.txt'
     

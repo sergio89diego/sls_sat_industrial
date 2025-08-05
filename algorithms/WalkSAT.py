@@ -24,7 +24,7 @@ class WalkSAT:
         temp_dir = tempfile.mkdtemp()
         file_formula = os.path.join(temp_dir, "random_formula.txt")
         try:
-            path_generator_model = "./communityAttachment/random"  # Path to the external model generator
+            path_generator_model = "./generator/communityAttachment/random"  # Path to the external model generator
             arguments = ['-n', str(self.variables), '-m', str(self.clauses),
                         '-k', str(self.clauseLength), '-s', str(self.seed)]
             process = subprocess.Popen([path_generator_model] + arguments, stdout=subprocess.PIPE)
