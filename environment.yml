@@ -1,0 +1,15 @@
+# Conda environment for the TFM – Búsqueda Estocástica en 3‑SAT
+
+name: tfm-sls
+channels:
+
+* conda-forge
+  dependencies:
+* python>=3.10,<3.12
+* numpy
+* pandas
+* matplotlib
+* tqdm
+* tabulate
+* jinja2
+* pip
