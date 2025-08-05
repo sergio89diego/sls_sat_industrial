@@ -4,7 +4,7 @@ Repositorio que acompaña al Trabajo Fin de Máster «Búsqueda estocásti
 
 - **Algoritmos** (Python) – `algorithms/`
 - **Generador C++** (submódulo) – `generator/`
-- **Scripts de ejecución y análisis** – `main.py`, `modules/`, `plot_results.py`, `compare_metrics.py`
+- **Scripts de ejecución y análisis** – `main.py`, `modules/experiment_runner_parallel.py`, `modules/plot_results.py`, `modules/compare_metrics.py`
 - **Datos** – `data/` (vacío: se rellena al ejecutar los experimentos)
 
 ---

@@ -10,46 +10,47 @@
 #   make clean    → borra binarios C++ y salidas en data/
 
 # ———————————————————————————————
-# Variables de usuario (pueden sobre‑escribirse en la línea de comandos):
-PY        ?= python
-ENV_NAME  ?= tfm-sls
-CONDA_ACT ?= conda activate $(ENV_NAME)
+# Variables
+VENV_DIR ?= .venv
+PY       := $(VENV_DIR)/bin/python
+PIP      := $(VENV_DIR)/bin/pip
+REQ_FILE := requirements.txt
 
-# ———————————————————————————————
+# ─────────────────────────────────────────────────────────────
+# Objetivos de alto nivel
 .PHONY: env build run plots compare all clean
 
-## Crear (o actualizar) el entorno Conda —──────────────────────────────
-#  Si el entorno ya existe, simplemente lo actualiza.
+## crea/actualiza el entorno virtual
 env:
-	conda env list | grep -q "$(ENV_NAME)" \
-		&& (echo "[env] Ya existe: $(ENV_NAME)" ) \
-		|| conda env create -f environment.yml -n $(ENV_NAME)
-	@echo "[env] Activar con: 'conda activate $(ENV_NAME)'"
+	@if [ ! -d $(VENV_DIR) ]; then \
+		python -m venv $(VENV_DIR); \
+		echo "[+] Entorno creado en $(VENV_DIR)"; \
+	fi
+	$(PIP) install -U pip
+	$(PIP) install -r $(REQ_FILE)
 
-## Compilar el generador C++ —───────────────────────────────────────────
+## compila el generador C++ (dos proyectos)
 build:
-	$(CONDA_ACT) && $(MAKE) -C generator/communityAttachment
-	$(CONDA_ACT) && $(MAKE) -C generator/graph_features_sat_v_2_2
-	@echo "[build] Generador compilado en ambos directorios."
+	$(MAKE) -C generator/communityAttachment
+	$(MAKE) -C generator/graph_features_sat_v_2_2
 
-## Ejecutar todos los experimentos definidos en main.py —───────────────
-run:
-	$(CONDA_ACT) && $(PY) main.py
+## ejecuta toda la batería de experimentos
+run: env build
+	$(PY) main.py
 
-## Generar gráficas y métricas —────────────────────────────────────────
-plots:
-	$(CONDA_ACT) && $(PY) plot_results.py
+## genera gráficas y métricas
+plots: env
+	$(PY) plot_results.py
 
-compare:
-	$(CONDA_ACT) && $(PY) compare_metrics.py
+compare: env
+	$(PY) compare_metrics.py
 
-## Pipeline completo —──────────────────────────────────────────────────
+## pipeline completo
 all: build run plots compare
-	@echo "[all] Flujo completo finalizado."
 
-## Limpiar artefactos —─────────────────────────────────────────────────
+## limpia binarios y salidas
 clean:
-	 rm -rf data/results/* data/plots/* data/metrics/* || true
-	 $(MAKE) -C generator/communityAttachment clean
-	 $(MAKE) -C generator/graph_features_sat_v_2_2 clean
-	@echo "[clean] Directorios de salida y binarios eliminados."
+	$(MAKE) -C generator/communityAttachment clean || true
+	$(MAKE) -C generator/graph_features_sat_v_2_2 clean || true
+	rm -rf $(VENV_DIR)
+	rm -rf data/plots/* data/metrics/* data/results/*
