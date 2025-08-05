@@ -12,8 +12,8 @@
 # ———————————————————————————————
 # Variables
 VENV_DIR ?= .venv
-PY       := $(VENV_DIR)/bin/python
-PIP      := $(VENV_DIR)/bin/pip
+PY       := python3
+PIP      := pip
 REQ_FILE := requirements.txt
 
 # ─────────────────────────────────────────────────────────────
@@ -22,11 +22,10 @@ REQ_FILE := requirements.txt
 
 ## crea/actualiza el entorno virtual
 env:
-	@if [ ! -d $(VENV_DIR) ]; then \
-		python -m venv $(VENV_DIR); \
-		echo "[+] Entorno creado en $(VENV_DIR)"; \
-	fi
-	$(PIP) install -U pip
+	apt update && apt install -y python3-venv python3-pip
+	$(PY) -m venv $(VENV_DIR); \
+	echo "[+] Entorno creado en $(VENV_DIR)"; \
+	source $(VENV_DIR)/bin/activate; \
 	$(PIP) install -r $(REQ_FILE)
 
 ## compila el generador C++ (dos proyectos)
